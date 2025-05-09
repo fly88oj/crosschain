@@ -102,10 +102,10 @@ func (client *Client) FetchLegacyTxInfo(ctx context.Context, txHash xc_types.TxH
 	var from xc_types.Address
 	var to xc_types.Address
 	var amount xc_types.BigInt
-	sources, destinations := deserialiseTransactionEvents(info.Logs)
+	sources, destinations := deserializeTransactionEvents(info.Logs)
 	// If we cannot retrieve transaction events, we can infer that the TX is a native transfer
 	if len(sources) == 0 && len(destinations) == 0 {
-		from, to, amount, err = deserialiseNativeTransfer(tx)
+		from, to, amount, err = deserializeNativeTransfer(tx)
 		if err != nil {
 			return nil, err
 		}
@@ -299,7 +299,7 @@ func isNewAccount(ctx context.Context, client *Client, address xc_types.Address)
 	return newAccount, nil
 }
 
-func deserialiseTransactionEvents(log []*httpclient.Log) ([]*xc_types.LegacyTxInfoEndpoint, []*xc_types.LegacyTxInfoEndpoint) {
+func deserializeTransactionEvents(log []*httpclient.Log) ([]*xc_types.LegacyTxInfoEndpoint, []*xc_types.LegacyTxInfoEndpoint) {
 	sources := make([]*xc_types.LegacyTxInfoEndpoint, 0)
 	destinations := make([]*xc_types.LegacyTxInfoEndpoint, 0)
 
@@ -337,7 +337,7 @@ func deserialiseTransactionEvents(log []*httpclient.Log) ([]*xc_types.LegacyTxIn
 	return sources, destinations
 }
 
-func deserialiseNativeTransfer(tx *httpclient.GetTransactionIDResponse) (xc_types.Address, xc_types.Address, xc_types.BigInt, error) {
+func deserializeNativeTransfer(tx *httpclient.GetTransactionIDResponse) (xc_types.Address, xc_types.Address, xc_types.BigInt, error) {
 	if len(tx.RawData.Contract) != 1 {
 		return "", "", xc_types.BigInt{}, fmt.Errorf("unsupported transaction")
 	}
